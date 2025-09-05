@@ -55,6 +55,12 @@ group :development, :test do
   gem "factory_bot_rails"
 end
 
+# AWS SDK for Bedrock
+gem "aws-sdk-bedrockruntime"
+
+# Environment variables
+gem "dotenv-rails"
+
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"

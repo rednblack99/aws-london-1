@@ -12,7 +12,10 @@ class UploadsController < ApplicationController
       FileUtils.mkdir_p(File.dirname(file_path))
       File.open(file_path, 'wb') { |file| file.write(uploaded_file.read) }
       
-      redirect_to new_upload_path, notice: "File uploaded successfully: #{filename}"
+      analysis_service = AnalysisService.new
+      @results = analysis_service.analyze_csv_data(file_path)
+      
+      render :results
     else
       redirect_to new_upload_path, alert: "Please select a valid CSV file"
     end
