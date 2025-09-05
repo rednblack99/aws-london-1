@@ -1,6 +1,10 @@
 class VerbatimCollectionsController < ApplicationController
   def show
     @collection = VerbatimCollection.find(params[:id])
+    if @collection.analysis_results.any?
+      @q = @collection.analysis_results.ransack(params[:q])
+      @filtered_results = @q.result.order(:response_id)
+    end
   end
 
   def analyze

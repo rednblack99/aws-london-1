@@ -15,6 +15,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_05_142405) do
     t.integer "verbatim_collection_id", null: false
     t.integer "response_id"
     t.text "text"
+    t.string "parent_theme"
     t.text "thematic_codes"
     t.string "sentiment"
     t.boolean "is_garbage"

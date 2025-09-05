@@ -4,6 +4,7 @@ class CreateAnalysisResults < ActiveRecord::Migration[8.0]
       t.references :verbatim_collection, null: false, foreign_key: true
       t.integer :response_id
       t.text :text
+      t.string :parent_theme
       t.text :thematic_codes
       t.string :sentiment
       t.boolean :is_garbage

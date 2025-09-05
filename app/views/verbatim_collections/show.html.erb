@@ -18,7 +18,38 @@
 <% if @collection.analysis_results.any? %>
   <h3>Analysis Results (<%= @collection.analysis_results.count %> responses)</h3>
   
-  <% @collection.analysis_results.order(:created_at).each do |result| %>
+  <%= search_form_for @q, url: collection_path(@collection), method: :get do |f| %>
+    <div style="background: #f8f9fa; padding: 15px; margin: 15px 0; border-radius: 5px;">
+      <h4>Filter Results</h4>
+      <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: end;">
+        <div>
+          <%= f.label :sentiment_eq, "Sentiment:" %><br>
+          <%= f.select :sentiment_eq, options_for_select([['All', ''], ['Positive', 'positive'], ['Negative', 'negative'], ['Neutral', 'neutral']], params.dig(:q, :sentiment_eq)), {}, { style: "padding: 5px;" } %>
+        </div>
+        <div>
+          <%= f.label :is_garbage_eq, "Quality:" %><br>
+          <%= f.select :is_garbage_eq, options_for_select([['All', ''], ['Good Quality', 'false'], ['Low Quality', 'true']], params.dig(:q, :is_garbage_eq)), {}, { style: "padding: 5px;" } %>
+        </div>
+        <div>
+          <%= f.label :parent_theme_cont, "Theme Contains:" %><br>
+          <%= f.text_field :parent_theme_cont, placeholder: "e.g. Product Performance", style: "padding: 5px;" %>
+        </div>
+        <div>
+          <%= f.label :text_cont, "Text Contains:" %><br>
+          <%= f.text_field :text_cont, placeholder: "Search text...", style: "padding: 5px;" %>
+        </div>
+        <div>
+          <%= f.submit "Filter", style: "background: #007cba; color: white; padding: 8px 16px; border: none; cursor: pointer;" %>
+          <%= link_to "Clear", collection_path(@collection), style: "background: #6c757d; color: white; padding: 8px 16px; text-decoration: none; margin-left: 5px;" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  
+  <% if @filtered_results %>
+    <p><strong>Showing <%= @filtered_results.count %> of <%= @collection.analysis_results.count %> results</strong></p>
+    
+    <% @filtered_results.each do |result| %>
     <table border="1" style="border-collapse: collapse; width: 100%; margin-top: 15px;">
       <tr style="background-color: #f8f9fa;">
         <td style="padding: 8px; font-weight: bold; width: 15%;">ID</td>
@@ -29,12 +60,16 @@
         <td style="padding: 8px;"><%= result.text %></td>
       </tr>
       <tr style="background-color: #f8f9fa;">
+        <td style="padding: 8px; font-weight: bold;">Parent Theme</td>
+        <td style="padding: 8px;"><%= result.parent_theme %></td>
+      </tr>
+      <tr>
         <td style="padding: 8px; font-weight: bold;">Themes</td>
         <td style="padding: 8px;"><%= result.thematic_codes %></td>
       </tr>
       <tr>
         <td style="padding: 8px; font-weight: bold;">Sentiment</td>
-        <td style="padding: 8px; color: <%= result.sentiment == 'positive' ? 'green' : result.sentiment == 'negative' ? 'red' : 'gray' %>;"><%= result.sentiment.capitalize %></td>
+        <td style="padding: 8px; color: <%= result.sentiment == 'positive' ? 'green' : result.sentiment == 'negative' ? 'red' : 'gray' %>;"><%= result.sentiment&.capitalize || 'Unknown' %></td>
       </tr>
       <tr style="background-color: #f8f9fa;">
         <td style="padding: 8px; font-weight: bold;">Quality</td>
@@ -42,6 +77,7 @@
       </tr>
     </table>
     <br>
+    <% end %>
   <% end %>
 <% else %>
   <h3>Responses Preview (First 10)</h3>

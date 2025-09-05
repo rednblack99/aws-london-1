@@ -7,7 +7,8 @@ class AnalysisStorageService
       collection.analysis_results.create!(
         response_id: row['id'].to_i,
         text: row['text'],
-        thematic_codes: row['thematic_codes'],
+        parent_theme: row['parent_theme'],
+        thematic_codes: row['themes'] || row['thematic_codes'],
         sentiment: row['sentiment'],
         is_garbage: row['is_garbage'] == 'true'
       )
