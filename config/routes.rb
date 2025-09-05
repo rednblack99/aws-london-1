@@ -11,5 +11,10 @@ Rails.application.routes.draw do
 
   # CSV Upload routes
   resources :uploads, only: [:new, :create]
+  resources :verbatim_collections, only: [:show], as: :collections, path: :collections do
+    member do
+      post :analyze
+    end
+  end
   root "uploads#new"
 end

@@ -1,0 +1,64 @@
+<h1>CSV Data Saved</h1>
+
+<div style="margin-bottom: 20px;">
+  <strong>Project:</strong> <%= @collection.project_title %><br>
+  <strong>Question:</strong> <%= @collection.question_text %><br>
+  <strong>Total Responses:</strong> <%= @collection.verbatims.count %>
+</div>
+
+<%= link_to "Upload Another File", new_upload_path, style: "margin-right: 10px;" %>
+<% if @collection.analysis_results.any? %>
+  <span style="background: #28a745; color: white; padding: 8px 16px;">✓ Analysis Complete</span>
+<% else %>
+  <%= form_with url: analyze_collection_path(@collection), method: :post, local: true, style: "display: inline;" do |form| %>
+    <%= form.submit "Analyze This Data", style: "background: #007cba; color: white; padding: 8px 16px; border: none; cursor: pointer;" %>
+  <% end %>
+<% end %>
+
+<% if @collection.analysis_results.any? %>
+  <h3>Analysis Results (<%= @collection.analysis_results.count %> responses)</h3>
+  
+  <% @collection.analysis_results.order(:created_at).each do |result| %>
+    <table border="1" style="border-collapse: collapse; width: 100%; margin-top: 15px;">
+      <tr style="background-color: #f8f9fa;">
+        <td style="padding: 8px; font-weight: bold; width: 15%;">ID</td>
+        <td style="padding: 8px;"><%= result.response_id %></td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; font-weight: bold; vertical-align: top;">Text</td>
+        <td style="padding: 8px;"><%= result.text %></td>
+      </tr>
+      <tr style="background-color: #f8f9fa;">
+        <td style="padding: 8px; font-weight: bold;">Themes</td>
+        <td style="padding: 8px;"><%= result.thematic_codes %></td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; font-weight: bold;">Sentiment</td>
+        <td style="padding: 8px; color: <%= result.sentiment == 'positive' ? 'green' : result.sentiment == 'negative' ? 'red' : 'gray' %>;"><%= result.sentiment.capitalize %></td>
+      </tr>
+      <tr style="background-color: #f8f9fa;">
+        <td style="padding: 8px; font-weight: bold;">Quality</td>
+        <td style="padding: 8px; color: <%= result.is_garbage ? 'red' : 'green' %>;"><%= result.is_garbage ? 'Low Quality' : 'Good Quality' %></td>
+      </tr>
+    </table>
+    <br>
+  <% end %>
+<% else %>
+  <h3>Responses Preview (First 10)</h3>
+  <table border="1" style="border-collapse: collapse; width: 100%; margin-top: 10px;">
+    <thead>
+      <tr style="background-color: #f0f0f0;">
+        <th style="padding: 10px;">ID</th>
+        <th style="padding: 10px;">Response Text</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @collection.verbatims.limit(10).each do |verbatim| %>
+        <tr>
+          <td style="padding: 10px;"><%= verbatim.id %></td>
+          <td style="padding: 10px;"><%= verbatim.text %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

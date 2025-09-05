@@ -10,5 +10,34 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 0) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_05_142405) do
+  create_table "analysis_results", force: :cascade do |t|
+    t.integer "verbatim_collection_id", null: false
+    t.integer "response_id"
+    t.text "text"
+    t.text "thematic_codes"
+    t.string "sentiment"
+    t.boolean "is_garbage"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["verbatim_collection_id"], name: "index_analysis_results_on_verbatim_collection_id"
+  end
+
+  create_table "verbatim_collections", force: :cascade do |t|
+    t.text "project_title"
+    t.text "question_text"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "verbatims", force: :cascade do |t|
+    t.text "text"
+    t.integer "verbatim_collection_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["verbatim_collection_id"], name: "index_verbatims_on_verbatim_collection_id"
+  end
+
+  add_foreign_key "analysis_results", "verbatim_collections"
+  add_foreign_key "verbatims", "verbatim_collections"
 end

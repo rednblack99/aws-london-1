@@ -1,0 +1,31 @@
+<h1>Analysis Results</h1>
+
+<%= link_to "Back to Collection", collection_path(@collection), class: "button" %>
+<%= link_to "Upload Another File", new_upload_path, class: "button" %>
+
+<% if @results && @results.any? %>
+  <table border="1" style="border-collapse: collapse; width: 100%; margin-top: 20px;">
+    <thead>
+      <tr style="background-color: #f0f0f0;">
+        <th style="padding: 10px;">ID</th>
+        <th style="padding: 10px;">Text</th>
+        <th style="padding: 10px;">Themes</th>
+        <th style="padding: 10px;">Sentiment</th>
+        <th style="padding: 10px;">Is Garbage</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @results.each do |row| %>
+        <tr>
+          <td style="padding: 10px;"><%= row["id"] %></td>
+          <td style="padding: 10px; max-width: 300px;"><%= row["text"] %></td>
+          <td style="padding: 10px;"><%= row["thematic_codes"] %></td>
+          <td style="padding: 10px;"><%= row["sentiment"] %></td>
+          <td style="padding: 10px;"><%= row["is_garbage"] %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No results to display.</p>
+<% end %>
