@@ -27,6 +27,8 @@ class BedrockService
     }
     puts "Payload size: #{payload.to_json.length} bytes"
 
+    start_time = Time.now
+    
     (retries + 1).times do |attempt|
       puts "Attempt #{attempt + 1}/#{retries + 1}"
       
@@ -38,10 +40,25 @@ class BedrockService
         http.request(request)
       end
 
-      puts "Response: #{response.code}"
+      end_time = Time.now
+      duration = end_time - start_time
+      puts "Response: #{response.code} (#{duration.round(2)}s)"
       
       if response.code == '200'
         result = JSON.parse(response.body)
+        
+        # Extract usage metrics
+        usage = result.dig('usage')
+        if usage
+          puts "=== USAGE METRICS ==="
+          puts "Input tokens: #{usage['inputTokens']}"
+          puts "Output tokens: #{usage['outputTokens']}"
+          puts "Total tokens: #{usage['totalTokens']}"
+          puts "Duration: #{duration.round(2)} seconds"
+          puts "Tokens per second: #{(usage['outputTokens'].to_f / duration).round(2)}"
+          puts "====================="
+        end
+        
         return result.dig('output', 'message', 'content', 0, 'text')
       elsif response.code == '429' && attempt < retries
         wait_time = 2 ** attempt
